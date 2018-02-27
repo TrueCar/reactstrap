@@ -120,8 +120,7 @@ class TetherContent extends React.Component {
   }
 
   renderIntoSubtree() {
-    ReactDOM.unstable_renderSubtreeIntoContainer(
-      this,
+    ReactDOM.createPortal(
       this.renderChildren(),
       this._element
     );
