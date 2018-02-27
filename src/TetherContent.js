@@ -107,8 +107,16 @@ class TetherContent extends React.Component {
     this.renderIntoSubtree();
     this._tether = new Tether(this.getTetherConfig());
     this.props.tetherRef(this._tether);
-    this._tether.position();
-    this._element.childNodes[0].focus();
+    // Existing code relies on mount behavior of unstable_renderSubtreeIntoContainer in React 15, which has changed
+    // in React 16, so the initial layout is not correct.
+    // https://github.com/facebook/react/issues/12160
+
+    // Cross-browser: Promise queues a microtask, which runs before layout, thereby preventing tooltip flickering on
+    // Safari and Firefox (which don't follow spec for order of requestAnimationFrame and render/layout).
+    Promise.resolve().then(() => {
+      this._tether.position();
+      this._element.childNodes[0].focus();
+    });
   }
 
   toggle(e) {
